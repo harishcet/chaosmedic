@@ -1,0 +1,73 @@
+# ChaosMedic Autonomous Self-Healing Pipeline Blueprint.
+#
+# Pipeline: CONNECT -> DETECT -> COLLECT -> UNDERSTAND -> DIAGNOSE -> REPAIR -> SANDBOX -> VALIDATE -> DEPLOY -> REMEMBER
+version: "1"
+
+entrypoint: detect
+
+# Human-in-the-loop approval gate before deployment
+interrupt_before:
+  - deploy
+
+nodes:
+  - id: detect
+    step: detect
+    agents: [detection]
+  - id: collect
+    step: collect
+    agents: [evidence]
+  - id: diagnose
+    step: diagnose
+    agents: [diagnosis]
+  - id: repair
+    step: repair
+    agents: [plan_engine]
+  - id: sandbox_validate
+    step: sandbox_validate
+    agents: [validation]
+  - id: deploy
+    step: deploy
+    agents: [recovery]
+  - id: remember
+    step: remember
+    agents: [memory]
+
+edges:
+  - from: detect
+    to: collect
+  - from: collect
+    to: diagnose
+  - from: diagnose
+    to: repair
+  - from: repair
+    to: sandbox_validate
+  - from: sandbox_validate
+    route: after_sandbox_validate
+    branches:
+      deploy: deploy
+      repair: repair
+      escalate: END
+  - from: deploy
+    to: remember
+  - from: remember
+    to: END
+
+agents:
+  detection:
+    tools: []
+  evidence:
+    tools: []
+  diagnosis:
+    tools: []
+  plan_engine:
+    tools: []
+  validation:
+    tools: []
+  recovery:
+    tools: []
+  memory:
+    tools: []
+
+off_graph:
+  incident-poller:
+    tools: []

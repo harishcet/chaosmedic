@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  # ChaosMedic Autonomous Engine & SRE Console
+  chaosmedic:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chaosmedic-engine
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - LOG_LEVEL=INFO
+      - CHAOSMEDIC_DB_PATH=/app/data/chaosmedic.db
+      - SANDBOX_BACKEND=subprocess
+    volumes:
+      - chaosmedic-data:/app/data
+    restart: unless-stopped
+
+  # Monitored Demo Application (Fault Target)
+  demo-billing-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chaosmedic-demo-app
+    ports:
+      - "5000:5000"
+    command: ["python", "-m", "demo_app.service"]
+    environment:
+      - PORT=5000
+    restart: unless-stopped
+
+volumes:
+  chaosmedic-data:

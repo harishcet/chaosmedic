@@ -1,0 +1,31 @@
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Secrets / local
+*.pem
+*.key
+deploy/**/secrets.yaml
+
+# Local bootstrap config (secrets)
+bootstrap.env
+console/node_modules/
+
+# Local databases & drill backups
+*.db
+*.db-journal
+*.bak
+.claude/

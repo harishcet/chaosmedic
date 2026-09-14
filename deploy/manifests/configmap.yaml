@@ -1,0 +1,29 @@
+# Non-secret configuration. Secrets (LLM_API_KEY, LLM_BASE_URL, GITHUB_APP_PRIVATE_KEY,
+# DATABASE_URL) live in the opsgentic-secrets Secret (see secret.example.yaml) — not here.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opsgentic-config
+  namespace: opsgentic
+data:
+  MCP_ENABLED: "true"
+  MCP_CONFIG_PATH: "/app/mcp-config/servers.yaml"
+  MCP_RECURSION_LIMIT: "30"
+  K8S_MCP_URL: "http://kubernetes-mcp.opsgentic.svc:8080/mcp"
+  GITHUB_MCP_URL: "http://github-mcp.opsgentic.svc:8082/mcp"
+  PROMETHEUS_MCP_URL: "http://prometheus-mcp.opsgentic.svc:8083/mcp"
+  # Cluster Prometheus the prometheus-mcp server queries (in-cluster, no auth).
+  PROMETHEUS_URL: "http://kube-prometheus-stack-prometheus.prometheus.svc:9090"
+  DB_POOL_MAX_SIZE: "10"
+  LLM_MODEL: "qwen3:235b-instruct"
+  LLM_TEMPERATURE: "0.7"
+  LLM_MAX_TOKENS: "16000"
+  GIT_CONFIG_PATH: "/app/config/gitops.yaml"
+  GITHUB_APP_ID: "4100865"
+  GITHUB_APP_INSTALLATION_ID: "141487695"
+  # PR comment agent: literal trigger token matched in a comment body ("@<handle> ...")
+  # and the expected bot login for the self-guard. The webhook secret is in the Secret.
+  GITHUB_AGENT_HANDLE: "opsgentic-agent"
+  MAX_RCA_ATTEMPTS: "3"
+  AUTO_APPROVE: "true"
+  LOG_LEVEL: "INFO"

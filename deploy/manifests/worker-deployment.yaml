@@ -1,0 +1,50 @@
+# Queue worker: consumes deferred runs (Procrastinate over Postgres) and drives the graph.
+# Same image as the API, different entrypoint (opsgentic-worker). No Service (it is a consumer).
+# The worker applies the run-status table and the Procrastinate schema on startup (idempotent).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opsgentic-worker
+  namespace: opsgentic
+  labels:
+    app: opsgentic-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opsgentic-worker
+  template:
+    metadata:
+      labels:
+        app: opsgentic-worker
+    spec:
+      serviceAccountName: opsgentic
+      containers:
+        - name: worker
+          image: opsgentic            # name + tag set centrally in kustomization (images:)
+          imagePullPolicy: IfNotPresent
+          command: ["opsgentic-worker"]
+          envFrom:
+            - configMapRef:
+                name: opsgentic-config
+            - secretRef:
+                name: opsgentic-secrets
+          volumeMounts:
+            - name: agent-skills
+              mountPath: /app/agent-skills
+              readOnly: true
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+      volumes:
+        - name: agent-skills
+          configMap:
+            name: opsgentic-skills

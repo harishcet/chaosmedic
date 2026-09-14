@@ -1,0 +1,56 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# opsgentic app image — both the API and worker Deployments reference the logical name
+# `opsgentic`; set the real registry + tag here once (bump newTag to roll a new build).
+images:
+  - name: opsgentic
+    newName: docker.io/lehuannhatrang/opsgentic
+    newTag: dev-1.14
+  - name: opsgentic-console
+    newName: docker.io/lehuannhatrang/opsgentic-console
+    newTag: dev-1.14
+
+# secret.example.yaml is a template, not part of the base apply.
+resources:
+  - namespace.yaml
+  - rbac/serviceaccount.yaml
+  - rbac/clusterrole-readonly.yaml
+  - rbac/clusterrolebinding.yaml
+  - mcp/serviceaccount.yaml
+  - mcp/deployment.yaml
+  - mcp/service.yaml
+  - mcp/github-deployment.yaml
+  - mcp/github-service.yaml
+  - mcp/prometheus-deployment.yaml
+  - mcp/prometheus-service.yaml
+  - postgres/statefulset.yaml
+  - postgres/service.yaml
+  - configmap.yaml
+  - deployment.yaml
+  - worker-deployment.yaml
+  - service.yaml
+  - webhook/ingress-tailscale.yaml
+  - secrets.yaml
+  - console/serviceaccount.yaml
+  - console/role.yaml
+  - console/rolebinding.yaml
+  - console/deployment.yaml
+  - console/service.yaml
+
+# Agent skill prompts -> opsgentic-skills ConfigMap, mounted at /app/agent-skills.
+# Stable name (no hash suffix) so the Deployment's volume reference resolves across
+# kustomize/ArgoCD versions. After editing a skill: kubectl rollout restart deploy/opsgentic
+# (the loader reads skills once at startup, so a restart is needed regardless).
+generatorOptions:
+  disableNameSuffixHash: true
+
+configMapGenerator:
+  - name: opsgentic-skills
+    namespace: opsgentic
+    files:
+      - agent-skills/sre.md
+      - agent-skills/gitops.md
+      - agent-skills/validation.md
+      - agent-skills/code.md
+      - agent-skills/pr-responder.md

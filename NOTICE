@@ -1,0 +1,17 @@
+ChaosMedic — Autonomous Multi-Agent Infrastructure Self-Healing & Incident Response Engine
+
+Copyright (C) 2026 ChaosMedic Contributors.
+
+This project is derived from and substantially modified from OpsGentic (https://github.com/opsgentic/opsgentic).
+The original OpsGentic codebase was created by the OpsGentic authors and contributors.
+
+Original codebase notice and copyright:
+Copyright (C) OpsGentic Contributors
+
+Modifications made in ChaosMedic include:
+- Transformation of remediation target from Kubernetes YAML manifests to application source code (AST-aware repair engine).
+- Introduction of an isolated multi-backend sandbox abstraction (Docker and subprocess fallbacks for free-tier environments).
+- Addition of a Multi-Plan Engine generating candidate diffs and automated scoring (test pass rate, regression safety, minimality).
+- Decoupling of PostgreSQL and Procrastinate requirements with a zero-cost SQLite database and in-process async background task runner.
+- Modernized light-themed autonomous SRE incident response dashboard with live 10-stage pipeline tracing.
+- Addition of an Incident Memory store for recurring incident patterns and safe candidate retrieval.

@@ -1,0 +1,38 @@
+[project]
+name = "chaosmedic"
+version = "0.1.0"
+description = "ChaosMedic — Autonomous Multi-Agent Infrastructure Self-Healing & Incident Response Engine"
+requires-python = ">=3.11"
+dependencies = [
+    "langgraph>=0.2.0",
+    "langchain-core>=0.3.0",
+    "langchain-openai>=0.2.0",
+    "langchain-mcp-adapters>=0.1.0",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+    "python-dotenv>=1.0",
+    "fastapi>=0.111",
+    "uvicorn[standard]>=0.30",
+    "httpx>=0.27",
+    "pyyaml>=6.0",
+    "ruamel.yaml>=0.18",
+    "langgraph-checkpoint-postgres>=2.0",
+    "psycopg[binary]>=3.1",
+    "psycopg-pool>=3.2",
+    "pyjwt[crypto]>=2.8",
+    "procrastinate>=3.0",
+]
+
+[project.scripts]
+chaosmedic-api = "chaosmedic.main:main"
+chaosmedic = "chaosmedic.cli:main"
+chaosmedic-worker = "chaosmedic.worker:main"
+opsgentic-api = "chaosmedic.main:main"
+opsgentic = "chaosmedic.cli:main"
+opsgentic-worker = "chaosmedic.worker:main" 
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/chaosmedic", "src/opsgentic"]
